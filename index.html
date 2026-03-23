@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete Wealth Strategy — Ontario CCPC Owner</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif']},colors:{navy:{900:'#0f1225',950:'#0a0d1a'},accent:{blue:'#4f8cff',green:'#34d399',red:'#f87171',yellow:'#fbbf24',purple:'#a78bfa',orange:'#fb923c'}}}}}</script>
+<style>
+html{scroll-behavior:smooth}body{background:#0a0d1a}
+.glass{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(12px)}
+.glow{box-shadow:0 0 40px rgba(79,140,255,0.08)}
+.gradient-text{background:linear-gradient(135deg,#4f8cff,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(79,140,255,0.3),transparent)}
+.tag{display:inline-block;padding:2px 10px;border-radius:9999px;font-size:.7rem;font-weight:500}
+.tab-btn{transition:all .2s}.tab-btn.active{background:rgba(79,140,255,0.15);border-color:rgba(79,140,255,0.4);color:#4f8cff}
+.tab-content{display:none}.tab-content.active{display:block}
+canvas{max-height:320px}
+input[type=range]{accent-color:#4f8cff}
+input[type=number]{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:white;font-family:monospace}
+input[type=number]:focus{outline:none;border-color:#4f8cff}
+@media(max-width:768px){canvas{max-height:260px}.tab-btn{font-size:.6rem;padding:5px 8px}}
+@media print{body{background:#fff!important;color:#000!important}.glass{background:#fff!important;border:1px solid #ddd!important}.no-print{display:none!important}}
+</style>
+</head>
+<body class="text-gray-200 font-sans antialiased">
+
+<!-- Password Screen -->
+<div id="pw-screen" class="fixed inset-0 z-[100] flex items-center justify-center" style="background:#0a0d1a">
+<div class="glass rounded-2xl p-8 max-w-sm w-full mx-4 text-center glow">
+<div class="text-3xl mb-2">&#x1f512;</div>
+<h2 class="text-xl font-bold text-white mb-1">Protected Document</h2>
+<p class="text-gray-400 text-sm mb-6">Enter the password to view this strategy.<br><span class="text-gray-500 text-xs">Hint: My mother's maiden name</span></p>
+<input type="password" id="pw-input" placeholder="Password" autocomplete="off"
+  class="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white text-center text-lg tracking-widest focus:outline-none focus:border-accent-blue mb-3"
+  onkeydown="if(event.key==='Enter')checkPw()">
+<button onclick="checkPw()" class="w-full py-3 rounded-lg bg-accent-blue/20 text-accent-blue border border-accent-blue/30 font-medium text-sm hover:bg-accent-blue/30 transition">Unlock</button>
+<p id="pw-error" class="text-accent-red text-xs mt-3 hidden">Incorrect password. Try again.</p>
+</div>
+</div>
+<script>
+function checkPw(){
+const v=document.getElementById('pw-input').value.toLowerCase().trim();
+if(v==='shua'){
+document.getElementById('pw-screen').style.display='none';
+}else{
+document.getElementById('pw-error').classList.remove('hidden');
+document.getElementById('pw-input').value='';
+document.getElementById('pw-input').focus();
+}
+}
+document.getElementById('pw-input').focus();
+</script>
+
+<!-- Nav -->
+<nav class="fixed top-0 w-full z-50 glass border-b border-white/5 no-print">
+<div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between overflow-x-auto">
+<span class="text-sm font-semibold text-white/80 shrink-0 mr-4">Wealth Strategy</span>
+<div class="flex gap-1.5 shrink-0">
+<button onclick="switchTab('overview')" id="tab-overview" class="tab-btn active text-xs px-3 py-1.5 rounded-lg border border-white/10">Overview</button>
+<button onclick="switchTab('personal')" id="tab-personal" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Personal</button>
+<button onclick="switchTab('holdco')" id="tab-holdco" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Holdco</button>
+<button onclick="switchTab('salary')" id="tab-salary" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Salary &amp; Tax</button>
+<button onclick="switchTab('annual')" id="tab-annual" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Annual Plan</button>
+<button onclick="switchTab('calc')" id="tab-calc" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-accent-green/30 text-accent-green">Calculator</button>
+</div>
+</div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- TAB 1: OVERVIEW -->
+<!-- ============================================================ -->
+<div id="content-overview" class="tab-content active pt-20">
+
+<section class="min-h-[55vh] flex items-center justify-center px-4">
+<div class="max-w-3xl text-center">
+<span class="tag bg-accent-blue/20 text-accent-blue">Ontario CCPC</span>
+<span class="tag bg-accent-green/20 text-accent-green ml-2">Revised 2026</span>
+<h1 class="text-4xl md:text-5xl font-bold text-white leading-tight mt-4 mb-6">Complete<br><span class="gradient-text">Wealth Strategy</span></h1>
+<p class="text-gray-400 max-w-2xl mx-auto">Simplified, critically reviewed, and corrected. Personal + holdco + salary optimization + annual operations.</p>
+</div>
+</section>
+
+<!-- The Simple Version -->
+<section class="max-w-5xl mx-auto px-4 py-10">
+<h2 class="text-2xl font-bold text-white mb-2">The Strategy in 60 Seconds</h2>
+<p class="text-gray-400 mb-6 text-sm">Everything below supports these 5 moves. That's it.</p>
+<div class="grid md:grid-cols-5 gap-3">
+<div class="glass rounded-xl p-4 text-center border-accent-green/20"><div class="text-2xl font-bold text-accent-green">1</div><div class="text-white font-medium text-sm mt-1">Max TFSA</div><div class="text-gray-500 text-xs mt-1">$7K/yr. Tax-free forever. #1 priority.</div></div>
+<div class="glass rounded-xl p-4 text-center border-accent-blue/20"><div class="text-2xl font-bold text-accent-blue">2</div><div class="text-white font-medium text-sm mt-1">Moderate RRSP</div><div class="text-gray-500 text-xs mt-1">$18K/yr. US stocks. Don't over-fill it.</div></div>
+<div class="glass rounded-xl p-4 text-center border-accent-purple/20"><div class="text-2xl font-bold text-accent-purple">3</div><div class="text-white font-medium text-sm mt-1">Holdco = Main Vehicle</div><div class="text-gray-500 text-xs mt-1">$200-600K/yr in swap ETFs. CDA builds naturally.</div></div>
+<div class="glass rounded-xl p-4 text-center border-accent-yellow/20"><div class="text-2xl font-bold text-accent-yellow">4</div><div class="text-white font-medium text-sm mt-1">$100K Salary</div><div class="text-gray-500 text-xs mt-1">Full CPP. Low brackets. Top up with dividends.</div></div>
+<div class="glass rounded-xl p-4 text-center border-accent-orange/20"><div class="text-2xl font-bold text-accent-orange">5</div><div class="text-white font-medium text-sm mt-1">Control Your Income</div><div class="text-gray-500 text-xs mt-1">Never lock too much in RRSP. Holdco = control.</div></div>
+</div>
+</section>
+
+<!-- Annual Money Flow -->
+<section class="max-w-5xl mx-auto px-4 py-10">
+<h2 class="text-2xl font-bold text-white mb-6">Annual Money Flow (at $400K Corp Gross)</h2>
+<div class="glass rounded-2xl p-6">
+<div class="grid md:grid-cols-2 gap-8">
+<div>
+<h3 class="text-white font-semibold mb-3">Corp Side</h3>
+<div class="space-y-2">
+<div class="flex justify-between p-2 rounded bg-accent-blue/5 text-sm"><span>Salary to you</span><span class="font-mono text-accent-blue">$100,000</span></div>
+<div class="flex justify-between p-2 rounded bg-accent-green/5 text-sm"><span>Eligible dividends to you</span><span class="font-mono text-accent-green">$40,000</span></div>
+<div class="flex justify-between p-2 rounded bg-accent-red/5 text-sm"><span>Corp tax (12.2% on $260K)</span><span class="font-mono text-accent-red">-$31,720</span></div>
+<div class="flex justify-between p-2 rounded bg-accent-purple/5 text-sm font-medium"><span>To holdco investments</span><span class="font-mono text-accent-purple">$228,280</span></div>
+</div>
+</div>
+<div>
+<h3 class="text-white font-semibold mb-3">Your Personal Cash</h3>
+<div class="space-y-2">
+<div class="flex justify-between p-2 rounded bg-white/5 text-sm"><span>Salary after tax</span><span class="font-mono">$78,600</span></div>
+<div class="flex justify-between p-2 rounded bg-white/5 text-sm"><span>Dividends after tax</span><span class="font-mono">$34,000</span></div>
+<div class="flex justify-between p-2 rounded bg-accent-green/5 text-sm"><span>RRSP contribution</span><span class="font-mono text-accent-green">-$18,000</span></div>
+<div class="flex justify-between p-2 rounded bg-accent-green/5 text-sm"><span>RRSP refund (to TFSA)</span><span class="font-mono text-accent-green">+$5,580</span></div>
+<div class="flex justify-between p-2 rounded bg-accent-blue/5 text-sm"><span>TFSA contribution</span><span class="font-mono">-$7,000</span></div>
+<div class="flex justify-between p-2 rounded bg-accent-green/5 text-sm"><span>CDA extraction (when available)</span><span class="font-mono text-accent-green">+$30-48K tax-free</span></div>
+<div class="flex justify-between p-2 rounded bg-white/10 text-sm font-semibold"><span class="text-white">Spending cash</span><span class="font-mono text-white">~$123K+</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Why This Beats the Old Plan -->
+<section class="max-w-5xl mx-auto px-4 py-10">
+<h2 class="text-2xl font-bold text-white mb-6">Why This Revised Plan Is Better</h2>
+<div class="glass rounded-2xl p-6 overflow-x-auto">
+<table class="w-full text-sm">
+<thead><tr class="border-b border-white/10 text-left"><th class="py-2 pr-4 text-gray-400">Factor</th><th class="py-2 pr-4 text-gray-400">Old Plan ($175K salary)</th><th class="py-2 text-accent-green">Revised ($100K salary)</th></tr></thead>
+<tbody>
+<tr class="border-b border-white/5"><td class="py-2 pr-4">Salary</td><td class="pr-4 font-mono">$175,000</td><td class="font-mono text-accent-green">$100,000</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4">RRSP/year</td><td class="pr-4 font-mono">$31,500</td><td class="font-mono text-accent-green">$18,000</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4">RRSP at retirement</td><td class="pr-4 font-mono text-accent-red">$1.37M (RRIF trap)</td><td class="font-mono text-accent-green">$783K (manageable)</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4">Forced RRIF at 72</td><td class="pr-4 font-mono text-accent-red">~$72K/yr taxable</td><td class="font-mono text-accent-green">~$41K/yr taxable</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4">OAS clawback?</td><td class="pr-4 text-accent-red font-medium">Yes — full clawback</td><td class="text-accent-green font-medium">No — stays under threshold</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4">Tax on RRIF withdrawals</td><td class="pr-4 font-mono text-accent-red">48-55%</td><td class="font-mono text-accent-green">29-34%</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4">Total tax over 20 years</td><td class="pr-4 font-mono text-accent-red">~$1,033K</td><td class="font-mono text-accent-green">~$743K</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4">CPP benefits</td><td class="pr-4">Full</td><td class="text-accent-green">Full</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4">Holdco funds (extra)</td><td class="pr-4">Baseline</td><td class="text-accent-green">+$270K more invested</td></tr>
+<tr><td class="py-2 pr-4 font-medium">Net lifetime wealth</td><td class="pr-4 font-mono">~$6.8M</td><td class="font-mono text-accent-green font-bold">~$7.1M</td></tr>
+</tbody>
+</table>
+</div>
+<div class="mt-4 p-3 bg-accent-green/10 rounded-lg border border-accent-green/20 text-sm text-accent-green">
+<strong>Key insight:</strong> The original $175K salary plan builds a $1.37M RRSP that forces taxable withdrawals in retirement, triggers OAS clawback, and costs ~$290K more in lifetime tax. The $100K salary plan keeps more in the holdco where you control extraction timing.
+</div>
+</section>
+
+<!-- Priority Actions -->
+<section class="max-w-5xl mx-auto px-4 py-10">
+<h2 class="text-2xl font-bold text-white mb-6">What To Do (In Order)</h2>
+<div class="space-y-3 max-w-3xl">
+<div class="glass rounded-xl p-4 flex items-start gap-3 border-accent-green/20">
+<div class="w-7 h-7 rounded bg-accent-green/20 flex items-center justify-center text-accent-green font-bold text-xs shrink-0">1</div>
+<div class="text-sm"><strong class="text-white">Open corporate brokerage account</strong> <span class="text-gray-400">for holdco. Interactive Brokers or Questrade.</span></div>
+</div>
+<div class="glass rounded-xl p-4 flex items-start gap-3 border-accent-green/20">
+<div class="w-7 h-7 rounded bg-accent-green/20 flex items-center justify-center text-accent-green font-bold text-xs shrink-0">2</div>
+<div class="text-sm"><strong class="text-white">Set salary at $100K</strong> <span class="text-gray-400">from opco. Top up personal spending with eligible dividends as needed.</span></div>
+</div>
+<div class="glass rounded-xl p-4 flex items-start gap-3 border-accent-blue/20">
+<div class="w-7 h-7 rounded bg-accent-blue/20 flex items-center justify-center text-accent-blue font-bold text-xs shrink-0">3</div>
+<div class="text-sm"><strong class="text-white">Max TFSA ($7K)</strong> <span class="text-gray-400">on Jan 1 each year. Tax-free forever.</span></div>
+</div>
+<div class="glass rounded-xl p-4 flex items-start gap-3 border-accent-blue/20">
+<div class="w-7 h-7 rounded bg-accent-blue/20 flex items-center justify-center text-accent-blue font-bold text-xs shrink-0">4</div>
+<div class="text-sm"><strong class="text-white">RRSP: $18K/yr</strong> <span class="text-gray-400">in VOO/AVUV/AVDV. Not the max — keep RRIF manageable.</span></div>
+</div>
+<div class="glass rounded-xl p-4 flex items-start gap-3 border-accent-purple/20">
+<div class="w-7 h-7 rounded bg-accent-purple/20 flex items-center justify-center text-accent-purple font-bold text-xs shrink-0">5</div>
+<div class="text-sm"><strong class="text-white">Everything else → holdco</strong> <span class="text-gray-400">Buy HULC (60%) + HXDM (30%) + HXEM (10%). Buy and hold.</span></div>
+</div>
+<div class="glass rounded-xl p-4 flex items-start gap-3 border-accent-yellow/20">
+<div class="w-7 h-7 rounded bg-accent-yellow/20 flex items-center justify-center text-accent-yellow font-bold text-xs shrink-0">6</div>
+<div class="text-sm"><strong class="text-white">Replace QQC with TEC.TO</strong> <span class="text-gray-400">in your TFSA. Avoids US withholding tax.</span></div>
+</div>
+<div class="glass rounded-xl p-4 flex items-start gap-3 border-gray-500/20">
+<div class="w-7 h-7 rounded bg-gray-500/20 flex items-center justify-center text-gray-400 font-bold text-xs shrink-0">7</div>
+<div class="text-sm"><strong class="text-white">Later (year 3-5):</strong> <span class="text-gray-400">Estate freeze when holdco hits $500K+. Life insurance quotes. CDA building starts naturally.</span></div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 2: PERSONAL -->
+<!-- ============================================================ -->
+<div id="content-personal" class="tab-content pt-20">
+<section class="max-w-5xl mx-auto px-4 py-12">
+<h2 class="text-3xl font-bold text-white mb-8">Personal Portfolio</h2>
+
+<!-- RRSP -->
+<div class="glass rounded-2xl p-6 mb-6 border-accent-blue/20">
+<div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-white">RRSP — Moderate, Not Max</h3><span class="tag bg-accent-blue/20 text-accent-blue">$18K/yr &bull; US stocks only</span></div>
+<table class="w-full text-sm mb-4"><thead><tr class="border-b border-white/10 text-left"><th class="py-2 pr-4 text-gray-400">Fund</th><th class="py-2 pr-4 text-gray-400">What</th><th class="py-2 text-gray-400">Target %</th></tr></thead>
+<tbody>
+<tr class="border-b border-white/5"><td class="py-2 pr-4 text-white font-medium">VOO</td><td class="pr-4">S&P 500</td><td>50%</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4 text-white font-medium">AVUV</td><td class="pr-4">US Small Cap Value</td><td>30%</td></tr>
+<tr><td class="py-2 pr-4 text-white font-medium">AVDV</td><td class="pr-4">Int'l Small Cap Value</td><td>20%</td></tr>
+</tbody></table>
+
+<div class="p-4 bg-accent-yellow/10 rounded-xl border border-accent-yellow/20 mb-4">
+<h4 class="text-accent-yellow font-semibold text-sm mb-2">Why NOT Max RRSP? The RRIF Trap.</h4>
+<p class="text-gray-400 text-sm">At $31.5K/yr for 20 years, your RRSP hits ~$1.37M. At age 72, you're forced to withdraw ~$72K+/year (RRIF minimums). Combined with CPP and holdco income, you're in the 48%+ bracket AND lose OAS entirely (clawback starts at ~$93K income).</p>
+<p class="text-gray-400 text-sm mt-2">At $18K/yr, the RRSP reaches ~$783K. RRIF withdrawals of ~$41K/yr stay in low brackets and below OAS clawback. <strong class="text-white">You save ~$290K in lifetime tax.</strong></p>
+</div>
+
+<div class="grid md:grid-cols-2 gap-4">
+<div class="p-3 bg-accent-green/5 rounded-lg"><h5 class="text-accent-green font-medium text-sm">Keep contributing $18K/yr when:</h5><ul class="text-xs text-gray-400 mt-1 space-y-1"><li>&#x2713; Salary is $100K+ (deduction at 29-37% rate)</li><li>&#x2713; You plan retirement withdrawals under $90K/yr</li><li>&#x2713; You hold US-listed ETFs (0% withholding)</li></ul></div>
+<div class="p-3 bg-accent-red/5 rounded-lg"><h5 class="text-accent-red font-medium text-sm">Stop contributing when:</h5><ul class="text-xs text-gray-400 mt-1 space-y-1"><li>&#x2717; Salary drops below $90K</li><li>&#x2717; RRSP balance exceeds $800K</li><li>&#x2717; You expect retirement income above $150K/yr</li></ul></div>
+</div>
+</div>
+
+<!-- TFSA -->
+<div class="glass rounded-2xl p-6 mb-6 border-accent-green/20">
+<div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-white">TFSA — Max Every Year</h3><span class="tag bg-accent-green/20 text-accent-green">Tax-free forever</span></div>
+<table class="w-full text-sm mb-4"><thead><tr class="border-b border-white/10 text-left"><th class="py-2 pr-4 text-gray-400">Fund</th><th class="py-2 pr-4 text-gray-400">What</th><th class="py-2 text-gray-400">%</th></tr></thead>
+<tbody>
+<tr class="border-b border-white/5"><td class="py-2 pr-4 text-white font-medium">VIU</td><td class="pr-4">International Developed</td><td>40%</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4 text-white font-medium">VEE</td><td class="pr-4">Emerging Markets</td><td>20%</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4 text-white font-medium">XIC</td><td class="pr-4">Canadian Equity</td><td>25%</td></tr>
+<tr><td class="py-2 pr-4"><span class="text-accent-yellow font-medium">TEC.TO</span> <span class="text-gray-600 text-xs">(was QQC)</span></td><td class="pr-4">Global Tech Leaders</td><td>15%</td></tr>
+</tbody></table>
+<div class="p-3 bg-accent-yellow/10 rounded-lg text-xs text-accent-yellow"><strong>Action:</strong> Swap QQC for TEC.TO — QQC pays US dividends in TFSA = 15% withholding you can never recover.</div>
+</div>
+
+<!-- Taxable -->
+<div class="glass rounded-2xl p-6 border-gray-600/20">
+<div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-white">Taxable — $50K</h3><span class="tag bg-gray-500/20 text-gray-400">Small, leave it</span></div>
+<table class="w-full text-sm"><thead><tr class="border-b border-white/10 text-left"><th class="py-2 pr-4 text-gray-400">Fund</th><th class="py-2 pr-4 text-gray-400">What</th><th class="py-2 text-gray-400">%</th></tr></thead>
+<tbody>
+<tr class="border-b border-white/5"><td class="py-2 pr-4 text-white font-medium">HULC</td><td class="pr-4">S&P 500 (swap, zero distributions)</td><td>75%</td></tr>
+<tr><td class="py-2 pr-4 text-white font-medium">XIC</td><td class="pr-4">Canadian Equity</td><td>25%</td></tr>
+</tbody></table>
+</div>
+</section>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 3: HOLDCO -->
+<!-- ============================================================ -->
+<div id="content-holdco" class="tab-content pt-20">
+<section class="max-w-5xl mx-auto px-4 py-12">
+<h2 class="text-3xl font-bold text-white mb-2">Corporate Holdco Strategy</h2>
+<p class="text-gray-400 mb-8">Simplified to 3 funds. Buy and hold. Let CDA build naturally.</p>
+
+<!-- Tax Cards -->
+<div class="grid md:grid-cols-4 gap-3 mb-8">
+<div class="glass rounded-xl p-4 text-center border-accent-green/20"><div class="text-2xl font-bold text-accent-green">0%</div><div class="text-white font-medium text-sm mt-1">Cdn Dividends</div><div class="text-gray-500 text-xs">Part IV — 100% refundable</div></div>
+<div class="glass rounded-xl p-4 text-center border-accent-blue/20"><div class="text-2xl font-bold text-accent-blue">~9.75%</div><div class="text-white font-medium text-sm mt-1">Capital Gains</div><div class="text-gray-500 text-xs">50% inclusion + CDA</div></div>
+<div class="glass rounded-xl p-4 text-center border-accent-yellow/20"><div class="text-2xl font-bold text-accent-yellow">~19.5%</div><div class="text-white font-medium text-sm mt-1">Interest</div><div class="text-gray-500 text-xs">Avoid in holdco</div></div>
+<div class="glass rounded-xl p-4 text-center border-accent-red/20"><div class="text-2xl font-bold text-accent-red">~19.5%+</div><div class="text-white font-medium text-sm mt-1">US Dividends</div><div class="text-gray-500 text-xs">+15% WHT drag</div></div>
+</div>
+
+<!-- Simplified Portfolio -->
+<h3 class="text-xl font-bold text-white mb-4">Holdco Portfolio (Simplified)</h3>
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+<div class="glass rounded-xl p-5 text-center glow border-accent-blue/20"><div class="text-3xl font-bold text-white">60%</div><div class="text-accent-blue font-semibold mt-1">HULC</div><div class="text-gray-400 text-sm">S&P 500 Swap</div><div class="text-gray-500 text-xs mt-1">Zero distributions. Zero AAII. Cost ~0.40%</div></div>
+<div class="glass rounded-xl p-5 text-center border-accent-purple/20"><div class="text-3xl font-bold text-white">30%</div><div class="text-accent-purple font-semibold mt-1">HXDM</div><div class="text-gray-400 text-sm">Int'l Developed Swap</div><div class="text-gray-500 text-xs mt-1">Avoids foreign withholding. Cost ~0.52%</div></div>
+<div class="glass rounded-xl p-5 text-center border-accent-purple/20"><div class="text-3xl font-bold text-white">10%</div><div class="text-accent-purple font-semibold mt-1">HXEM</div><div class="text-gray-400 text-sm">Emerging Mkts Swap</div><div class="text-gray-500 text-xs mt-1">Same swap benefit. Cost ~0.55%</div></div>
+</div>
+
+<div class="glass rounded-xl p-4 mb-8 border-accent-green/20">
+<h4 class="text-accent-green font-medium text-sm mb-2">Why all swap ETFs? Why not Canadian dividend stocks?</h4>
+<p class="text-gray-400 text-sm">Swap ETFs generate <strong class="text-white">zero AAII</strong> (protecting your opco's SBD) and defer all tax until you sell. While Canadian dividends are 0% effective tax, they still require Part IV tax cash flow and add complexity. For simplicity: all swaps, buy and hold, CDA builds when you eventually sell.</p>
+</div>
+
+<!-- CDA -->
+<div class="glass rounded-2xl p-6 mb-8 border-accent-green/20">
+<h3 class="text-xl font-bold text-white mb-3">Capital Dividend Account (CDA)</h3>
+<p class="text-gray-400 text-sm mb-4">Every time you sell holdings at a gain, 50% goes to CDA. You can withdraw that amount <strong class="text-accent-green">100% tax-free</strong> via capital dividend.</p>
+
+<div class="grid md:grid-cols-2 gap-4 mb-4">
+<div class="p-4 bg-accent-red/5 rounded-xl text-center"><div class="text-gray-400 text-sm">Regular dividend</div><div class="text-xl font-bold text-white">$100K</div><div class="text-accent-red">Tax: $39-47K</div></div>
+<div class="p-4 bg-accent-green/5 rounded-xl text-center border border-accent-green/20"><div class="text-gray-400 text-sm">Capital dividend (CDA)</div><div class="text-xl font-bold text-white">$100K</div><div class="text-accent-green font-semibold">Tax: $0</div></div>
+</div>
+
+<h4 class="text-white font-medium text-sm mb-2">Do I need to force-sell every December?</h4>
+<p class="text-gray-400 text-sm"><strong class="text-white">No.</strong> The original plan had a complex annual sell/rebuy ritual. In practice, the CDA builds naturally over 15-25 years as you rebalance, take profits, or fund retirement. Don't force taxable events just to build CDA — let it happen organically. When you need cash, sell, and use the CDA portion tax-free.</p>
+
+<div class="p-3 bg-accent-yellow/10 rounded-lg text-xs text-accent-yellow mt-3">
+<strong>Warning:</strong> Never declare a capital dividend exceeding your CDA balance. CRA charges a 60% penalty on the excess. Always confirm with your accountant first.
+</div>
+</div>
+
+<!-- SBD -->
+<div class="glass rounded-xl p-4 border-accent-yellow/20">
+<h4 class="text-white font-medium mb-2">The $50K AAII Threshold</h4>
+<p class="text-gray-400 text-sm">Passive investment income over $50K/yr grinds down your opco's Small Business Deduction. With an all-swap holdco portfolio: <strong class="text-accent-green">AAII = $0</strong> until you sell. You have full control.</p>
+</div>
+</section>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 4: SALARY & TAX -->
+<!-- ============================================================ -->
+<div id="content-salary" class="tab-content pt-20">
+<section class="max-w-5xl mx-auto px-4 py-12">
+<h2 class="text-3xl font-bold text-white mb-2">Salary, Dividends &amp; Tax</h2>
+<p class="text-gray-400 mb-8">$100K salary is the sweet spot. Here's why.</p>
+
+<!-- Brackets -->
+<div class="glass rounded-2xl p-6 mb-8">
+<h3 class="text-lg font-bold text-white mb-4">Ontario Combined Tax Brackets (2026)</h3>
+<table class="w-full text-sm"><thead><tr class="border-b border-white/10 text-left"><th class="py-2 pr-4 text-gray-400">Income</th><th class="py-2 pr-4 text-gray-400">Rate</th><th class="py-2 text-gray-400">Strategy</th></tr></thead>
+<tbody>
+<tr class="border-b border-white/5"><td class="py-2 pr-4 font-mono">$0-$57K</td><td class="pr-4 text-accent-green">20.05%</td><td class="text-gray-500">Fill with salary</td></tr>
+<tr class="border-b border-white/5 bg-accent-blue/5"><td class="py-2 pr-4 font-mono">$57K-$115K</td><td class="pr-4 text-accent-blue">29.65%</td><td class="text-accent-blue">$100K salary lands here &#x2605;</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4 font-mono">$115K-$158K</td><td class="pr-4 text-accent-yellow">37.16%</td><td class="text-gray-500">Diminishing returns</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-4 font-mono">$158K-$222K</td><td class="pr-4 text-accent-orange">41-45%</td><td class="text-gray-500">Too high — use dividends instead</td></tr>
+<tr><td class="py-2 pr-4 font-mono">$253K+</td><td class="pr-4 text-accent-red">46.16%</td><td class="text-gray-500">Avoid</td></tr>
+</tbody></table>
+</div>
+
+<!-- Three Paths -->
+<h3 class="text-xl font-bold text-white mb-4">Three Paths Compared (20 years)</h3>
+<div class="glass rounded-2xl p-6 mb-8 overflow-x-auto">
+<table class="w-full text-sm">
+<thead><tr class="border-b border-white/10 text-left"><th class="py-2 pr-3 text-gray-400">Metric</th><th class="py-2 pr-3 text-gray-400">$175K salary (old)</th><th class="py-2 pr-3 text-accent-green">$100K salary (new) &#x2605;</th><th class="py-2 text-gray-400">All dividends</th></tr></thead>
+<tbody>
+<tr class="border-b border-white/5"><td class="py-2 pr-3">RRSP/yr</td><td class="pr-3 font-mono">$31,500</td><td class="pr-3 font-mono text-accent-green">$18,000</td><td class="font-mono">$0</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-3">RRSP at retirement</td><td class="pr-3 font-mono text-accent-red">$1.37M</td><td class="pr-3 font-mono text-accent-green">$783K</td><td class="font-mono">$0</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-3">RRIF forced at 72</td><td class="pr-3 text-accent-red">~$72K/yr</td><td class="pr-3 text-accent-green">~$41K/yr</td><td class="">None</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-3">OAS clawback?</td><td class="pr-3 text-accent-red">Full</td><td class="pr-3 text-accent-green">No</td><td class="">No</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-3">CPP benefits?</td><td class="pr-3">Full</td><td class="pr-3 text-accent-green">Full</td><td class="text-accent-red">None (~$425K lost)</td></tr>
+<tr class="border-b border-white/5"><td class="py-2 pr-3">Total tax (20yr)</td><td class="pr-3 font-mono text-accent-red">~$1,033K</td><td class="pr-3 font-mono text-accent-green">~$743K</td><td class="font-mono">~$768K</td></tr>
+<tr><td class="py-2 pr-3 font-medium">Net lifetime wealth</td><td class="pr-3 font-mono">~$6.8M</td><td class="pr-3 font-mono text-accent-green font-bold">~$7.1M</td><td class="font-mono">~$6.7M</td></tr>
+</tbody></table>
+</div>
+
+<!-- Why $100K -->
+<div class="glass rounded-xl p-5 border-accent-blue/20">
+<h4 class="text-white font-medium mb-2">Why $100K Is the Magic Number</h4>
+<ul class="text-sm text-gray-400 space-y-1">
+<li>&#x2713; <strong class="text-white">Full CPP credits</strong> — worth ~$17K/yr in retirement (~$425K over 25 years). Free money.</li>
+<li>&#x2713; <strong class="text-white">$18K RRSP room</strong> — enough to build a useful but manageable retirement RRSP (~$783K)</li>
+<li>&#x2713; <strong class="text-white">Stays in 29.65% bracket</strong> — no dollar taxed above 30%</li>
+<li>&#x2713; <strong class="text-white">Mortgage qualification</strong> — lenders see T4 income</li>
+<li>&#x2713; <strong class="text-white">Everything above</strong> → eligible dividends (lower integrated tax) or stays in holdco</li>
+</ul>
+</div>
+</section>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 5: ANNUAL PLAN -->
+<!-- ============================================================ -->
+<div id="content-annual" class="tab-content pt-20">
+<section class="max-w-5xl mx-auto px-4 py-12">
+<h2 class="text-3xl font-bold text-white mb-8">Annual Plan (Simplified)</h2>
+
+<div class="grid md:grid-cols-4 gap-3 mb-8">
+<div class="glass rounded-xl p-4 border-accent-blue/20"><div class="text-accent-blue font-semibold text-sm mb-2">Q1</div><ul class="text-xs text-gray-400 space-y-1"><li>&#x2022; TFSA $7K (Jan 1)</li><li>&#x2022; RRSP $18K (by Mar 1)</li><li>&#x2022; Q1 holdco buy</li><li>&#x2022; Insurance premium</li></ul></div>
+<div class="glass rounded-xl p-4 border-accent-green/20"><div class="text-accent-green font-semibold text-sm mb-2">Q2</div><ul class="text-xs text-gray-400 space-y-1"><li>&#x2022; Q2 holdco buy</li><li>&#x2022; T2 return (Jun 30)</li><li>&#x2022; Personal T1 (Apr 30)</li></ul></div>
+<div class="glass rounded-xl p-4 border-accent-yellow/20"><div class="text-accent-yellow font-semibold text-sm mb-2">Q3</div><ul class="text-xs text-gray-400 space-y-1"><li>&#x2022; Q3 holdco buy</li><li>&#x2022; T1 installment (Sep 15)</li></ul></div>
+<div class="glass rounded-xl p-4 border-accent-purple/20"><div class="text-accent-purple font-semibold text-sm mb-2">Q4</div><ul class="text-xs text-gray-400 space-y-1"><li>&#x2022; Q4 holdco buy</li><li>&#x2022; Tax-loss harvest (by Dec 27)</li><li>&#x2022; Year-end AAII check</li><li>&#x2022; Plan next year salary</li></ul></div>
+</div>
+
+<!-- Quarterly Routine -->
+<div class="glass rounded-2xl p-6 mb-8">
+<h3 class="text-lg font-bold text-white mb-4">Every Quarter (4x/year)</h3>
+<ol class="space-y-2 text-sm text-gray-400 list-decimal list-inside">
+<li>Opco dividends holdco's quarterly share (tax-free intercorporate dividend)</li>
+<li>Buy whichever of HULC/HXDM/HXEM is furthest below target allocation</li>
+<li>Log the trade: date, ticker, shares, price, total (for ACB tracking)</li>
+<li>That's it. No selling, no rebalancing sales, no forced gains.</li>
+</ol>
+</div>
+
+<!-- Milestones -->
+<div class="glass rounded-2xl p-6 mb-8">
+<h3 class="text-lg font-bold text-white mb-4">Portfolio Milestones</h3>
+<div class="space-y-3">
+<div class="flex items-start gap-3"><span class="tag bg-accent-blue/20 text-accent-blue shrink-0">$0-500K</span><div class="text-sm text-gray-400">DIY everything. Buy 3 swap ETFs quarterly. Track ACB. No advisor needed.</div></div>
+<div class="flex items-start gap-3"><span class="tag bg-accent-green/20 text-accent-green shrink-0">$500K+</span><div class="text-sm text-gray-400">Estate freeze on holdco shares. Get life insurance quotes. Consider fee-only advisor ($2-5K/yr).</div></div>
+<div class="flex items-start gap-3"><span class="tag bg-accent-purple/20 text-accent-purple shrink-0">$2M+</span><div class="text-sm text-gray-400">Hire portfolio manager. Estate planning. Start CDA extractions when you need cash.</div></div>
+<div class="flex items-start gap-3"><span class="tag bg-accent-yellow/20 text-accent-yellow shrink-0">$5M+</span><div class="text-sm text-gray-400">Full wealth team. Family trust. Succession planning. You've made it.</div></div>
+</div>
+</div>
+
+<!-- Accountant Sheet -->
+<div class="glass rounded-2xl p-6 border-accent-yellow/20">
+<h3 class="text-lg font-bold text-white mb-4">For Your Accountant</h3>
+<div class="space-y-2 text-sm">
+<div class="flex gap-3 p-2 border-b border-white/5"><span class="text-accent-blue font-mono w-10 shrink-0">T2</span><span>Holdco T2 return (6 months post year-end)</span></div>
+<div class="flex gap-3 p-2 border-b border-white/5"><span class="text-accent-green font-mono w-10 shrink-0">S89</span><span>Schedule 89 CDA election (when capital dividends paid)</span></div>
+<div class="flex gap-3 p-2 border-b border-white/5"><span class="text-accent-purple font-mono w-10 shrink-0">CDA</span><span>Running CDA balance (capital gains + insurance)</span></div>
+<div class="flex gap-3 p-2 border-b border-white/5"><span class="text-accent-yellow font-mono w-10 shrink-0">AAII</span><span>Confirm under $50K (should be ~$0 with all-swap portfolio)</span></div>
+<div class="flex gap-3 p-2 border-b border-white/5"><span class="text-accent-orange font-mono w-10 shrink-0">ACB</span><span>Track adjusted cost base for all ETFs</span></div>
+<div class="flex gap-3 p-2"><span class="text-accent-blue font-mono w-10 shrink-0">GRIP</span><span>GRIP balance for eligible dividend capacity</span></div>
+</div>
+<div class="mt-3 p-2 bg-white/5 rounded text-xs text-gray-500">Key rates: Investment income 50.17% (30.67% RDTOH). Cap gains inclusion 50%. Part IV 38.33% (100% refundable). SBD grind $5/$1 over $50K AAII. CDA penalty 60%. SBD rate 12.2%. General rate 26.5%.</div>
+</div>
+</section>
+</div>
+
+<!-- ============================================================ -->
+<!-- TAB 6: CALCULATOR -->
+<!-- ============================================================ -->
+<div id="content-calc" class="tab-content pt-20">
+<section class="max-w-5xl mx-auto px-4 py-12">
+<h2 class="text-3xl font-bold text-white mb-2">Projection Calculator</h2>
+<p class="text-gray-400 mb-8">Plug in your numbers to see personalized projections.</p>
+
+<div class="grid md:grid-cols-2 gap-8">
+<!-- Inputs -->
+<div class="space-y-6">
+<div class="glass rounded-2xl p-6">
+<h3 class="text-white font-semibold mb-4">Your Numbers</h3>
+<div class="space-y-4">
+<div><label class="text-sm text-gray-400 block mb-1">Annual holdco contribution ($)</label>
+<input type="number" id="calc-holdco" value="228000" min="0" max="2000000" step="10000" class="w-full" onchange="updateCalc()"></div>
+<div><label class="text-sm text-gray-400 block mb-1">Current holdco balance ($)</label>
+<input type="number" id="calc-holdco-bal" value="0" min="0" step="10000" class="w-full" onchange="updateCalc()"></div>
+<div><label class="text-sm text-gray-400 block mb-1">Annual RRSP contribution ($)</label>
+<input type="number" id="calc-rrsp" value="18000" min="0" max="50000" step="1000" class="w-full" onchange="updateCalc()"></div>
+<div><label class="text-sm text-gray-400 block mb-1">Current RRSP balance ($)</label>
+<input type="number" id="calc-rrsp-bal" value="97000" min="0" step="5000" class="w-full" onchange="updateCalc()"></div>
+<div><label class="text-sm text-gray-400 block mb-1">Current TFSA balance ($)</label>
+<input type="number" id="calc-tfsa-bal" value="139000" min="0" step="5000" class="w-full" onchange="updateCalc()"></div>
+<div><label class="text-sm text-gray-400 block mb-1">Annual return assumption (%)</label>
+<input type="number" id="calc-return" value="7" min="1" max="15" step="0.5" class="w-full" onchange="updateCalc()"></div>
+<div><label class="text-sm text-gray-400 block mb-1">Years to project</label>
+<input type="range" id="calc-years" value="20" min="5" max="30" step="1" class="w-full" oninput="document.getElementById('yr-label').textContent=this.value+' years';updateCalc()">
+<span id="yr-label" class="text-sm text-accent-blue">20 years</span></div>
+</div>
+</div>
+</div>
+
+<!-- Results -->
+<div class="space-y-4">
+<div class="glass rounded-2xl p-6 glow" id="calc-results">
+<h3 class="text-white font-semibold mb-4">Projected Balances</h3>
+<div class="space-y-3" id="calc-output"></div>
+</div>
+<div class="glass rounded-2xl p-6">
+<canvas id="calcChart"></canvas>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- Disclaimer -->
+<section class="max-w-5xl mx-auto px-4 py-8">
+<div class="glass rounded-xl p-4 border-accent-yellow/20">
+<p class="text-gray-500 text-xs">This is for educational purposes only, not financial/tax/legal advice. Tax rules change. Always consult qualified professionals. Based on Canadian tax law as of early 2026.</p>
+</div>
+</section>
+<footer class="max-w-5xl mx-auto px-4 py-6 text-center text-gray-600 text-xs">Complete Wealth Strategy &middot; Ontario CCPC &middot; 2026 (Revised)</footer>
+
+<script>
+const C={blue:'#4f8cff',green:'#34d399',red:'#f87171',yellow:'#fbbf24',purple:'#a78bfa',orange:'#fb923c'};
+Chart.defaults.color='#9ca3af';Chart.defaults.font.family='Inter';Chart.defaults.borderColor='rgba(255,255,255,0.06)';
+
+function switchTab(t){
+document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+document.getElementById('content-'+t).classList.add('active');
+document.getElementById('tab-'+t).classList.add('active');
+window.scrollTo({top:0,behavior:'smooth'});
+if(t==='calc'&&!window._calcInit){window._calcInit=true;updateCalc();}
+}
+
+let calcChart=null;
+function updateCalc(){
+const holdcoAnn=+document.getElementById('calc-holdco').value;
+const holdcoBal=+document.getElementById('calc-holdco-bal').value;
+const rrspAnn=+document.getElementById('calc-rrsp').value;
+const rrspBal=+document.getElementById('calc-rrsp-bal').value;
+const tfsaBal=+document.getElementById('calc-tfsa-bal').value;
+const ret=(+document.getElementById('calc-return').value)/100;
+const yrs=+document.getElementById('calc-years').value;
+
+const labels=[];const hData=[];const rData=[];const tData=[];
+let h=holdcoBal,r=rrspBal,tf=tfsaBal;
+for(let y=0;y<=yrs;y++){
+labels.push('Yr '+y);hData.push(Math.round(h));rData.push(Math.round(r));tData.push(Math.round(tf));
+h=(h+holdcoAnn)*(1+ret);r=(r+rrspAnn)*(1+ret);tf=(tf+7000)*(1+ret);
+}
+const totalH=hData[yrs],totalR=rData[yrs],totalT=tData[yrs],grand=totalH+totalR+totalT;
+const cda=Math.round(totalH*0.3*0.5);// rough: 30% of holdco is gains, 50% to CDA
+
+const out=document.getElementById('calc-output');
+out.innerHTML=`
+<div class="flex justify-between p-2 rounded bg-accent-purple/10"><span class="text-sm">Holdco</span><span class="font-mono text-accent-purple font-semibold">$${(totalH/1e6).toFixed(1)}M</span></div>
+<div class="flex justify-between p-2 rounded bg-accent-blue/10"><span class="text-sm">RRSP</span><span class="font-mono text-accent-blue font-semibold">$${(totalR/1e6).toFixed(1)}M</span></div>
+<div class="flex justify-between p-2 rounded bg-accent-green/10"><span class="text-sm">TFSA</span><span class="font-mono text-accent-green font-semibold">$${(totalT/1e6).toFixed(1)}M</span></div>
+<div class="flex justify-between p-2 rounded bg-white/10 font-bold"><span class="text-white">Total</span><span class="font-mono text-white">$${(grand/1e6).toFixed(1)}M</span></div>
+<div class="mt-2 text-xs text-gray-500">Est. CDA (tax-free): ~$${(cda/1000).toFixed(0)}K &bull; RRIF min at 72: ~$${(totalR*0.0528/1000).toFixed(0)}K/yr</div>
+<div class="text-xs text-gray-500">${totalR>1000000?'<span class="text-accent-yellow">&#x26A0; RRSP over $1M — consider reducing contributions to avoid RRIF trap</span>':'<span class="text-accent-green">&#x2713; RRSP manageable for RRIF purposes</span>'}</div>
+`;
+
+if(calcChart)calcChart.destroy();
+calcChart=new Chart(document.getElementById('calcChart'),{type:'line',data:{labels,datasets:[
+{label:'Holdco',data:hData,borderColor:C.purple,backgroundColor:'transparent',tension:.3,pointRadius:0,borderWidth:2},
+{label:'RRSP',data:rData,borderColor:C.blue,backgroundColor:'transparent',tension:.3,pointRadius:0,borderWidth:2},
+{label:'TFSA',data:tData,borderColor:C.green,backgroundColor:'transparent',tension:.3,pointRadius:0,borderWidth:2}
+]},options:{responsive:true,plugins:{legend:{position:'top',labels:{padding:12,usePointStyle:true}},tooltip:{callbacks:{label:c=>c.dataset.label+': $'+(c.parsed.y/1e6).toFixed(2)+'M'}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>'$'+(v/1e6).toFixed(0)+'M'},grid:{color:'rgba(255,255,255,0.06)'}},x:{ticks:{maxTicksLimit:8},grid:{display:false}}}}});
+}
+</script>
+</body>
+</html>
