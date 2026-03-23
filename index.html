@@ -64,6 +64,7 @@ document.getElementById('pw-input').focus();
 <button onclick="switchTab('holdco')" id="tab-holdco" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Holdco</button>
 <button onclick="switchTab('salary')" id="tab-salary" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Salary &amp; Tax</button>
 <button onclick="switchTab('annual')" id="tab-annual" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Annual Plan</button>
+<button onclick="switchTab('income')" id="tab-income" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-accent-orange/30 text-accent-orange">💰 Income Planner</button>
 <button onclick="switchTab('calc')" id="tab-calc" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-accent-green/30 text-accent-green">Calculator</button>
 </div>
 </div>
@@ -448,6 +449,131 @@ document.getElementById('pw-input').focus();
 </section>
 </div>
 
+<!-- ============================================================ -->
+<!-- TAB 7: INCOME PLANNER -->
+<!-- ============================================================ -->
+<div id="content-income" class="tab-content pt-20">
+<section class="max-w-5xl mx-auto px-4 py-12">
+<h2 class="text-3xl font-bold text-white mb-2">Income Planner</h2>
+<p class="text-gray-400 mb-8">Tell me how much you need. I'll tell you exactly how to take it out.</p>
+
+<div class="grid md:grid-cols-2 gap-8">
+<!-- LEFT: Inputs -->
+<div class="space-y-6">
+<div class="glass rounded-2xl p-6 glow border-accent-orange/20">
+<h3 class="text-white font-semibold mb-4">How Much Do You Need?</h3>
+<div class="space-y-4">
+<div>
+<label class="text-sm text-gray-400 block mb-1">Monthly net income needed ($)</label>
+<input type="number" id="ip-monthly" value="8500" min="2000" max="100000" step="500" class="w-full text-lg" oninput="updateIncomePlan()">
+<div class="flex gap-2 mt-2 flex-wrap">
+<button onclick="setMonthly(8500)" class="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-accent-orange/30 transition">$8.5K (now)</button>
+<button onclick="setMonthly(15000)" class="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-accent-orange/30 transition">$15K</button>
+<button onclick="setMonthly(20000)" class="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-accent-orange/30 transition">$20K</button>
+<button onclick="setMonthly(25000)" class="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-accent-orange/30 transition">$25K (family)</button>
+<button onclick="setMonthly(35000)" class="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-accent-orange/30 transition">$35K</button>
+</div>
+</div>
+<div>
+<label class="text-sm text-gray-400 block mb-1">Available CDA balance ($)</label>
+<input type="number" id="ip-cda" value="0" min="0" max="5000000" step="10000" class="w-full" oninput="updateIncomePlan()">
+<p class="text-gray-600 text-xs mt-1">Your accountant tracks this. $0 if holdco is new.</p>
+</div>
+<div>
+<label class="text-sm text-gray-400 block mb-1">Has GRIP?</label>
+<div class="flex gap-3">
+<label class="flex items-center gap-1.5 text-sm cursor-pointer"><input type="radio" name="ip-grip" value="yes" class="accent-accent-orange" onchange="updateIncomePlan()"> <span class="text-gray-400">Yes</span></label>
+<label class="flex items-center gap-1.5 text-sm cursor-pointer"><input type="radio" name="ip-grip" value="no" checked class="accent-accent-orange" onchange="updateIncomePlan()"> <span class="text-gray-400">No</span></label>
+<label class="flex items-center gap-1.5 text-sm cursor-pointer"><input type="radio" name="ip-grip" value="partial" class="accent-accent-orange" onchange="updateIncomePlan()"> <span class="text-gray-400">Some (ask accountant)</span></label>
+</div>
+</div>
+<div>
+<label class="text-sm text-gray-400 block mb-1">Annual corp gross revenue ($)</label>
+<input type="number" id="ip-revenue" value="400000" min="50000" max="5000000" step="25000" class="w-full" oninput="updateIncomePlan()">
+</div>
+</div>
+</div>
+
+<!-- Saved Plans -->
+<div class="glass rounded-xl p-4">
+<div class="flex items-center justify-between mb-3">
+<h4 class="text-white font-medium text-sm">Saved Plans</h4>
+<button onclick="savePlan()" class="text-xs px-3 py-1.5 rounded-lg bg-accent-orange/20 text-accent-orange border border-accent-orange/30 hover:bg-accent-orange/30 transition">Save Current</button>
+</div>
+<div id="ip-saved-list" class="space-y-2 text-sm">
+<p class="text-gray-600 text-xs">No saved plans yet. Adjust the numbers above and click Save.</p>
+</div>
+</div>
+</div>
+
+<!-- RIGHT: Results -->
+<div class="space-y-4">
+<!-- Extraction Plan -->
+<div class="glass rounded-2xl p-6 glow" id="ip-plan-card">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-white font-semibold">Your Extraction Plan</h3>
+<span id="ip-annual-label" class="tag bg-accent-orange/20 text-accent-orange">$102K/yr</span>
+</div>
+<div id="ip-plan-output" class="space-y-2"></div>
+</div>
+
+<!-- Tax Efficiency Meter -->
+<div class="glass rounded-xl p-4">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm text-gray-400">Tax Efficiency</span>
+<span id="ip-efficiency" class="text-sm font-mono text-accent-green">82%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-white/10">
+<div id="ip-efficiency-bar" class="h-2 rounded-full bg-accent-green transition-all" style="width:82%"></div>
+</div>
+<p id="ip-efficiency-note" class="text-gray-600 text-xs mt-2"></p>
+</div>
+
+<!-- Donut Chart -->
+<div class="glass rounded-xl p-4">
+<canvas id="ipChart" style="max-height:220px"></canvas>
+</div>
+
+<!-- Accountant Steps -->
+<div class="glass rounded-2xl p-6 border-accent-yellow/20" id="ip-accountant-card">
+<div class="flex items-center justify-between mb-3">
+<h3 class="text-white font-semibold text-sm">Steps for Your Accountant</h3>
+<button onclick="copyAccountantSteps()" class="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-accent-yellow/30 transition">📋 Copy</button>
+</div>
+<ol id="ip-accountant-steps" class="space-y-2 text-sm text-gray-400 list-decimal list-inside"></ol>
+</div>
+
+<!-- Plain English -->
+<div class="glass rounded-xl p-4 border-accent-blue/20">
+<h4 class="text-white font-medium text-sm mb-2">In Plain English</h4>
+<p id="ip-plain-english" class="text-gray-400 text-sm"></p>
+</div>
+</div>
+</div>
+
+<!-- Comparison Table -->
+<div class="mt-10">
+<h3 class="text-xl font-bold text-white mb-4">Quick Reference: Common Income Levels</h3>
+<div class="glass rounded-2xl p-6 overflow-x-auto">
+<table class="w-full text-sm" id="ip-comparison-table">
+<thead><tr class="border-b border-white/10 text-left">
+<th class="py-2 pr-3 text-gray-400">Monthly Net</th>
+<th class="py-2 pr-3 text-gray-400">Annual Net</th>
+<th class="py-2 pr-3 text-gray-400">Salary</th>
+<th class="py-2 pr-3 text-gray-400">Dividends</th>
+<th class="py-2 pr-3 text-gray-400">CDA</th>
+<th class="py-2 pr-3 text-gray-400">Total Gross</th>
+<th class="py-2 pr-3 text-gray-400">Total Tax</th>
+<th class="py-2 text-gray-400">Blended Rate</th>
+</tr></thead>
+<tbody id="ip-comparison-body"></tbody>
+</table>
+</div>
+</div>
+
+</section>
+</div>
+
 <!-- Disclaimer -->
 <section class="max-w-5xl mx-auto px-4 py-8">
 <div class="glass rounded-xl p-4 border-accent-yellow/20">
@@ -505,6 +631,333 @@ calcChart=new Chart(document.getElementById('calcChart'),{type:'line',data:{labe
 {label:'TFSA',data:tData,borderColor:C.green,backgroundColor:'transparent',tension:.3,pointRadius:0,borderWidth:2}
 ]},options:{responsive:true,plugins:{legend:{position:'top',labels:{padding:12,usePointStyle:true}},tooltip:{callbacks:{label:c=>c.dataset.label+': $'+(c.parsed.y/1e6).toFixed(2)+'M'}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>'$'+(v/1e6).toFixed(0)+'M'},grid:{color:'rgba(255,255,255,0.06)'}},x:{ticks:{maxTicksLimit:8},grid:{display:false}}}}});
 }
+
+/* ==========================================
+   INCOME PLANNER ENGINE
+   ========================================== */
+
+// Ontario 2026 combined federal+provincial tax brackets
+function calcSalaryTax(salary){
+  const brackets=[
+    [0,57375,0.2005],[57375,98040,0.2965],[98040,114750,0.3148],
+    [114750,150000,0.3316],[150000,177882,0.3716],[177882,220000,0.4116],
+    [220000,253414,0.4341],[253414,Infinity,0.5353]
+  ];
+  let tax=0,rem=salary;
+  for(const[lo,hi,rate]of brackets){
+    if(rem<=0)break;
+    const span=Math.min(rem,hi-lo);
+    tax+=span*rate;rem-=span;
+  }
+  // Basic personal amount credit (~$2,500 approx)
+  tax=Math.max(0,tax-2500);
+  return Math.round(tax);
+}
+
+function calcSalaryMarginal(salary){
+  if(salary<=57375)return 0.2005;if(salary<=98040)return 0.2965;
+  if(salary<=114750)return 0.3148;if(salary<=150000)return 0.3316;
+  if(salary<=177882)return 0.3716;if(salary<=220000)return 0.4116;
+  if(salary<=253414)return 0.4341;return 0.5353;
+}
+
+// Eligible dividend personal tax (Ontario combined, approximate)
+function calcEligDivTax(divAmount,otherIncome){
+  // Gross-up by 38%, then apply combined credits
+  // Effective rate at various income levels:
+  // Under $50K: ~0-8%, $50-100K: ~15-25%, $100-200K: ~28-35%, 200K+: ~39%
+  const totalInc=otherIncome+divAmount*1.38;
+  let effRate;
+  if(totalInc<50000)effRate=0.06;
+  else if(totalInc<90000)effRate=0.15;
+  else if(totalInc<120000)effRate=0.22;
+  else if(totalInc<180000)effRate=0.28;
+  else if(totalInc<250000)effRate=0.33;
+  else effRate=0.39;
+  return Math.round(divAmount*effRate);
+}
+
+// Non-eligible dividend personal tax (Ontario combined)
+function calcNonEligDivTax(divAmount,otherIncome){
+  const totalInc=otherIncome+divAmount*1.15;
+  let effRate;
+  if(totalInc<50000)effRate=0.12;
+  else if(totalInc<90000)effRate=0.22;
+  else if(totalInc<120000)effRate=0.30;
+  else if(totalInc<180000)effRate=0.36;
+  else if(totalInc<250000)effRate=0.40;
+  else effRate=0.47;
+  return Math.round(divAmount*effRate);
+}
+
+function calcCPP(salary){
+  const ype=3500,mpe=68500,rate=0.0595;
+  if(salary<=ype)return 0;
+  return Math.round(Math.min(salary,mpe)-ype)*rate;
+}
+
+function fmt(n){return n>=1000?'$'+n.toLocaleString('en-CA'):'$'+n;}
+function fmtK(n){return n>=1000000?'$'+(n/1e6).toFixed(1)+'M':n>=1000?'$'+(n/1000).toFixed(0)+'K':'$'+n;}
+
+function optimizeExtraction(targetNetAnnual,cdaBalance,hasGrip,corpRevenue){
+  // Step 1: Always $70K salary (unless target is very low)
+  const salary=Math.min(70000,targetNetAnnual);
+  const salaryTax=calcSalaryTax(salary);
+  const cpp=calcCPP(salary);
+  const salaryNet=salary-salaryTax-cpp;
+  const rrspRoom=Math.round(salary*0.18);
+  const rrspRefund=Math.round(rrspRoom*calcSalaryMarginal(salary));
+
+  let remaining=targetNetAnnual-salaryNet-rrspRefund;
+  if(remaining<0)remaining=0;
+
+  // Step 2: Use CDA first (tax-free)
+  const cdaUsed=Math.min(cdaBalance,remaining);
+  remaining-=cdaUsed;
+
+  // Step 3: Dividends for the rest
+  let divGross=0,divTax=0,divType='eligible';
+  if(remaining>0){
+    if(hasGrip==='yes'){
+      divType='eligible';
+      // Solve: divGross - calcEligDivTax(divGross, salary) = remaining
+      // Iterate to find gross
+      divGross=remaining;
+      for(let i=0;i<10;i++){
+        divTax=calcEligDivTax(divGross,salary);
+        const net=divGross-divTax;
+        divGross=Math.round(divGross*(remaining/Math.max(net,1)));
+      }
+      divTax=calcEligDivTax(divGross,salary);
+    } else {
+      divType='non-eligible';
+      divGross=remaining;
+      for(let i=0;i<10;i++){
+        divTax=calcNonEligDivTax(divGross,salary);
+        const net=divGross-divTax;
+        divGross=Math.round(divGross*(remaining/Math.max(net,1)));
+      }
+      divTax=calcNonEligDivTax(divGross,salary);
+    }
+  }
+
+  const divNet=divGross-divTax;
+  const totalGross=salary+divGross+cdaUsed;
+  const totalTax=salaryTax+cpp+divTax;
+  const totalNet=salaryNet+rrspRefund+cdaUsed+divNet;
+  const blendedRate=totalGross>0?totalTax/totalGross:0;
+  const efficiency=1-blendedRate;
+
+  // Corp side
+  const corpTaxOnSalary=0; // salary is deductible
+  const remainingCorpIncome=corpRevenue-salary;
+  const sbdIncome=Math.min(remainingCorpIncome,500000);
+  const corpTax=Math.round(sbdIncome*0.122);
+  const afterCorpTax=remainingCorpIncome-corpTax;
+  const toHoldco=afterCorpTax-divGross-cdaUsed;
+
+  return {
+    salary,salaryTax,salaryNet,cpp,rrspRoom,rrspRefund,
+    cdaUsed,
+    divGross,divTax,divNet,divType,
+    totalGross,totalTax,totalNet,blendedRate,efficiency,
+    corpTax,toHoldco:Math.max(0,toHoldco),
+    corpRevenue
+  };
+}
+
+let ipChart=null;
+let savedPlans=[];
+
+function setMonthly(v){
+  document.getElementById('ip-monthly').value=v;
+  updateIncomePlan();
+}
+
+function updateIncomePlan(){
+  const monthly=+document.getElementById('ip-monthly').value;
+  const annual=monthly*12;
+  const cdaBal=+document.getElementById('ip-cda').value;
+  const gripEl=document.querySelector('input[name="ip-grip"]:checked');
+  const grip=gripEl?gripEl.value:'no';
+  const revenue=+document.getElementById('ip-revenue').value;
+
+  const p=optimizeExtraction(annual,cdaBal,grip,revenue);
+
+  // Update label
+  document.getElementById('ip-annual-label').textContent=fmtK(annual)+'/yr';
+
+  // Plan output
+  const out=document.getElementById('ip-plan-output');
+  out.innerHTML=`
+    <div class="flex justify-between p-3 rounded-lg bg-accent-blue/10 border border-accent-blue/20">
+      <div><span class="text-white font-medium">Salary</span><span class="text-gray-500 text-xs ml-2">T4 income</span></div>
+      <div class="text-right"><span class="font-mono text-accent-blue">${fmt(p.salary)}</span><span class="text-gray-500 text-xs ml-2">tax ${fmt(p.salaryTax+p.cpp)}</span><span class="text-accent-blue text-xs ml-1">net ${fmt(p.salaryNet)}</span></div>
+    </div>
+    ${p.cdaUsed>0?`<div class="flex justify-between p-3 rounded-lg bg-accent-green/10 border border-accent-green/20">
+      <div><span class="text-white font-medium">Capital Dividend (CDA)</span><span class="text-xs ml-2 px-1.5 py-0.5 rounded bg-accent-green/20 text-accent-green">TAX-FREE</span></div>
+      <div class="text-right"><span class="font-mono text-accent-green font-semibold">${fmt(p.cdaUsed)}</span><span class="text-accent-green text-xs ml-1">net ${fmt(p.cdaUsed)}</span></div>
+    </div>`:''}
+    ${p.divGross>0?`<div class="flex justify-between p-3 rounded-lg bg-accent-purple/10 border border-accent-purple/20">
+      <div><span class="text-white font-medium">${p.divType==='eligible'?'Eligible':'Non-Eligible'} Dividends</span><span class="text-gray-500 text-xs ml-2">${p.divType==='eligible'?'needs GRIP':'no GRIP needed'}</span></div>
+      <div class="text-right"><span class="font-mono text-accent-purple">${fmt(p.divGross)}</span><span class="text-gray-500 text-xs ml-2">tax ${fmt(p.divTax)}</span><span class="text-accent-purple text-xs ml-1">net ${fmt(p.divNet)}</span></div>
+    </div>`:''}
+    <div class="flex justify-between p-3 rounded-lg bg-accent-green/5 border border-accent-green/10">
+      <div><span class="text-gray-400 text-sm">RRSP refund (from salary deduction)</span></div>
+      <div class="text-right"><span class="font-mono text-accent-green text-sm">+${fmt(p.rrspRefund)}</span></div>
+    </div>
+    <div class="divider my-2"></div>
+    <div class="flex justify-between p-3 rounded-lg bg-white/10">
+      <div><span class="text-white font-bold">Total In Your Pocket</span></div>
+      <div class="text-right"><span class="font-mono text-white font-bold text-lg">${fmt(p.totalNet)}</span><span class="text-gray-400 text-xs ml-2">(${fmt(Math.round(p.totalNet/12))}/mo)</span></div>
+    </div>
+    <div class="flex justify-between p-2 text-xs text-gray-500">
+      <span>Total tax paid: ${fmt(p.totalTax)}</span>
+      <span>Blended rate: ${(p.blendedRate*100).toFixed(1)}%</span>
+    </div>
+    <div class="flex justify-between p-2 text-xs text-gray-500">
+      <span>Corp tax: ${fmt(p.corpTax)}</span>
+      <span>Remaining to holdco: <span class="text-accent-purple">${fmtK(p.toHoldco)}</span></span>
+    </div>
+    <div class="flex justify-between p-2 text-xs text-gray-500">
+      <span>RRSP room generated: ${fmt(p.rrspRoom)}/yr</span>
+      <span>CPP contributions: ${fmt(p.cpp)}</span>
+    </div>
+  `;
+
+  // Efficiency
+  const eff=Math.round(p.efficiency*100);
+  document.getElementById('ip-efficiency').textContent=eff+'%';
+  const bar=document.getElementById('ip-efficiency-bar');
+  bar.style.width=eff+'%';
+  bar.className='h-2 rounded-full transition-all '+(eff>=80?'bg-accent-green':eff>=65?'bg-accent-yellow':'bg-accent-red');
+  const notes=[];
+  if(eff>=80)notes.push('Excellent — most income flows through low-tax channels.');
+  else if(eff>=65)notes.push('Good — consider using more CDA to improve.');
+  else notes.push('Could be better — high dividend volume is pushing up the rate.');
+  if(p.cdaUsed>0)notes.push(`CDA saved you ${fmt(Math.round(p.cdaUsed*0.35))} in tax.`);
+  if(p.salary>=70000)notes.push('Full CPP credits locked in.');
+  document.getElementById('ip-efficiency-note').textContent=notes.join(' ');
+
+  // Donut chart
+  if(ipChart)ipChart.destroy();
+  const chartData=[p.salaryNet,p.divNet,p.cdaUsed,p.rrspRefund].filter(v=>v>0);
+  const chartLabels=['Salary (net)','Dividends (net)','CDA (tax-free)','RRSP refund'].filter((_,i)=>[p.salaryNet,p.divNet,p.cdaUsed,p.rrspRefund][i]>0);
+  const chartColors=[C.blue,C.purple,C.green,C.yellow].filter((_,i)=>[p.salaryNet,p.divNet,p.cdaUsed,p.rrspRefund][i]>0);
+  ipChart=new Chart(document.getElementById('ipChart'),{type:'doughnut',data:{labels:chartLabels,datasets:[{data:chartData,backgroundColor:chartColors.map(c=>c+'33'),borderColor:chartColors,borderWidth:2}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom',labels:{padding:10,usePointStyle:true,font:{size:11}}},tooltip:{callbacks:{label:c=>c.label+': '+fmt(c.parsed)+' ('+Math.round(c.parsed/p.totalNet*100)+'%)'}}}}});
+
+  // Accountant steps
+  const steps=document.getElementById('ip-accountant-steps');
+  const stepsArr=[];
+  stepsArr.push(`Set annual salary at ${fmt(p.salary)} from the operating company. Process through payroll (T4). This generates ${fmt(p.rrspRoom)} in RRSP contribution room.`);
+  stepsArr.push(`Deduct CPP premiums: employee ${fmt(Math.round(p.cpp/2))} + employer ${fmt(Math.round(p.cpp/2))} = ${fmt(p.cpp)} total.`);
+  if(p.cdaUsed>0){
+    stepsArr.push(`Declare a capital dividend of ${fmt(p.cdaUsed)} from the CDA balance. File Schedule 89 (T2054) with the T2 return BEFORE paying the dividend. Confirm CDA balance with T2 Schedule 89 — penalty is 60% on excess.`);
+  }
+  if(p.divGross>0){
+    if(p.divType==='eligible'){
+      stepsArr.push(`Pay ${fmt(p.divGross)} in eligible dividends. Confirm GRIP balance supports this amount. Issue T5 slip showing eligible dividend designation.`);
+    } else {
+      stepsArr.push(`Pay ${fmt(p.divGross)} in non-eligible (ordinary) dividends. No GRIP required. Issue T5 slip as non-eligible dividends.`);
+    }
+  }
+  stepsArr.push(`Contribute ${fmt(p.rrspRoom)} to RRSP by March 1 deadline (VOO 55%, AVUV 30%, AVDV 15%). This generates a ~${fmt(p.rrspRefund)} tax refund on the personal T1 return.`);
+  stepsArr.push(`Contribute $7,000 to TFSA (on January 1 if possible).`);
+  stepsArr.push(`Transfer remaining after-tax corporate income (~${fmtK(p.toHoldco)}) to the holdco brokerage account. Buy HULC 60% / HXDM 30% / HXEM 10% quarterly.`);
+  stepsArr.push(`Track: CDA running balance, GRIP balance, ACB for all ETFs, AAII for SBD grind (should be ~$0 with swap ETFs).`);
+  steps.innerHTML=stepsArr.map((s,i)=>`<li class="leading-relaxed">${s}</li>`).join('');
+
+  // Plain English
+  document.getElementById('ip-plain-english').textContent=
+    `You pay yourself ${fmt(p.salary)} salary (for CPP and RRSP room), `+
+    (p.cdaUsed>0?`take ${fmt(p.cdaUsed)} completely tax-free from your CDA, `:'') +
+    (p.divGross>0?`and ${fmt(p.divGross)} in ${p.divType} dividends. `:'') +
+    `After all taxes (${fmt(p.totalTax)} total, ${(p.blendedRate*100).toFixed(0)}% blended rate), you keep ${fmt(p.totalNet)} — that's ${fmt(Math.round(p.totalNet/12))}/month. ` +
+    (p.toHoldco>0?`The remaining ${fmtK(p.toHoldco)} stays in the corp and goes into your holdco investments.`:'');
+
+  // Comparison table
+  buildComparisonTable(cdaBal,grip,revenue);
+}
+
+function buildComparisonTable(cda,grip,revenue){
+  const targets=[5000,8500,10000,15000,20000,25000,30000,35000,50000];
+  const body=document.getElementById('ip-comparison-body');
+  body.innerHTML=targets.map(m=>{
+    const p=optimizeExtraction(m*12,cda,grip,revenue);
+    const active=m===+document.getElementById('ip-monthly').value;
+    return `<tr class="${active?'bg-accent-orange/10 border border-accent-orange/20':'border-b border-white/5'} cursor-pointer hover:bg-white/5 transition" onclick="setMonthly(${m})">
+      <td class="py-2 pr-3 font-mono ${active?'text-accent-orange font-semibold':''}">$${(m/1000).toFixed(1)}K</td>
+      <td class="py-2 pr-3 font-mono">${fmtK(m*12)}</td>
+      <td class="py-2 pr-3 font-mono text-accent-blue">${fmtK(p.salary)}</td>
+      <td class="py-2 pr-3 font-mono text-accent-purple">${fmtK(p.divGross)}</td>
+      <td class="py-2 pr-3 font-mono text-accent-green">${p.cdaUsed>0?fmtK(p.cdaUsed):'-'}</td>
+      <td class="py-2 pr-3 font-mono">${fmtK(p.totalGross)}</td>
+      <td class="py-2 pr-3 font-mono text-accent-red">${fmtK(p.totalTax)}</td>
+      <td class="py-2 font-mono ${p.blendedRate<0.2?'text-accent-green':p.blendedRate<0.3?'text-accent-yellow':'text-accent-red'}">${(p.blendedRate*100).toFixed(0)}%</td>
+    </tr>`;
+  }).join('');
+}
+
+function savePlan(){
+  const monthly=+document.getElementById('ip-monthly').value;
+  const cda=+document.getElementById('ip-cda').value;
+  const grip=document.querySelector('input[name="ip-grip"]:checked').value;
+  const revenue=+document.getElementById('ip-revenue').value;
+  const p=optimizeExtraction(monthly*12,cda,grip,revenue);
+  const name=prompt('Name this plan (e.g., "Current lifestyle", "Family mode"):');
+  if(!name)return;
+  savedPlans.push({name,monthly,plan:p,ts:Date.now()});
+  renderSavedPlans();
+}
+
+function loadPlan(i){
+  const sp=savedPlans[i];
+  document.getElementById('ip-monthly').value=sp.monthly;
+  updateIncomePlan();
+}
+
+function deletePlan(i){
+  savedPlans.splice(i,1);
+  renderSavedPlans();
+}
+
+function renderSavedPlans(){
+  const list=document.getElementById('ip-saved-list');
+  if(savedPlans.length===0){list.innerHTML='<p class="text-gray-600 text-xs">No saved plans yet.</p>';return;}
+  list.innerHTML=savedPlans.map((sp,i)=>`
+    <div class="flex items-center justify-between p-2 rounded bg-white/5 border border-white/5">
+      <div class="cursor-pointer flex-1" onclick="loadPlan(${i})">
+        <span class="text-white text-xs font-medium">${sp.name}</span>
+        <span class="text-gray-500 text-xs ml-2">${fmtK(sp.monthly*12)}/yr — net ${fmtK(sp.plan.totalNet)} — ${(sp.plan.blendedRate*100).toFixed(0)}% tax</span>
+      </div>
+      <button onclick="deletePlan(${i})" class="text-gray-600 hover:text-accent-red text-xs ml-2">✕</button>
+    </div>
+  `).join('');
+}
+
+function copyAccountantSteps(){
+  const steps=document.getElementById('ip-accountant-steps');
+  const text=Array.from(steps.children).map((li,i)=>(i+1)+'. '+li.textContent).join('\n');
+  const monthly=+document.getElementById('ip-monthly').value;
+  const header='INCOME EXTRACTION PLAN — '+fmtK(monthly*12)+'/yr net\n'+'='.repeat(50)+'\n\n';
+  navigator.clipboard.writeText(header+text).then(()=>{
+    const btn=document.querySelector('#ip-accountant-card button');
+    btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy',2000);
+  });
+}
+
+// Init income planner when tab is opened
+const origSwitchTab=switchTab;
+switchTab=function(t){
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('content-'+t).classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(t==='calc'&&!window._calcInit){window._calcInit=true;updateCalc();}
+  if(t==='income'&&!window._ipInit){window._ipInit=true;updateIncomePlan();}
+};
 </script>
 </body>
 </html>
