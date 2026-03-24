@@ -9,19 +9,45 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif']},colors:{navy:{900:'#0f1225',950:'#0a0d1a'},accent:{blue:'#4f8cff',green:'#34d399',red:'#f87171',yellow:'#fbbf24',purple:'#a78bfa',orange:'#fb923c'}}}}}</script>
 <style>
-html{scroll-behavior:smooth}body{background:#0a0d1a}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:#0a0d1a;overflow-x:hidden}
 .glass{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(12px)}
 .glow{box-shadow:0 0 40px rgba(79,140,255,0.08)}
 .gradient-text{background:linear-gradient(135deg,#4f8cff,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(79,140,255,0.3),transparent)}
 .tag{display:inline-block;padding:2px 10px;border-radius:9999px;font-size:.7rem;font-weight:500}
-.tab-btn{transition:all .2s}.tab-btn.active{background:rgba(79,140,255,0.15);border-color:rgba(79,140,255,0.4);color:#4f8cff}
+.tab-btn{transition:all .2s;white-space:nowrap}.tab-btn.active{background:rgba(79,140,255,0.15);border-color:rgba(79,140,255,0.4);color:#4f8cff}
 .tab-content{display:none}.tab-content.active{display:block}
 canvas{max-height:320px}
-input[type=range]{accent-color:#4f8cff}
-input[type=number]{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:white;font-family:monospace}
+input[type=range]{accent-color:#4f8cff;width:100%}
+input[type=number]{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:white;font-family:monospace;font-size:16px}
 input[type=number]:focus{outline:none;border-color:#4f8cff}
-@media(max-width:768px){canvas{max-height:260px}.tab-btn{font-size:.6rem;padding:5px 8px}}
+input[type=password]{font-size:16px}
+/* Mobile nav: scrollable pill bar */
+.nav-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+.nav-scroll::-webkit-scrollbar{display:none}
+/* Mobile table scroll */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* Mobile structure flow: vertical */
+@media(max-width:768px){
+  canvas{max-height:220px}
+  .tab-btn{font-size:.65rem;padding:6px 10px}
+  h1{font-size:2rem!important}
+  h2{font-size:1.4rem!important}
+  h3{font-size:1.1rem!important}
+  .structure-flow{flex-direction:column!important;align-items:stretch!important}
+  .structure-flow .structure-arrow{transform:rotate(90deg);margin:4px auto}
+  section{padding-left:12px!important;padding-right:12px!important}
+  .grid.md\:grid-cols-2,.grid.md\:grid-cols-3,.grid.md\:grid-cols-4,.grid.md\:grid-cols-5{grid-template-columns:1fr!important}
+  table{font-size:.75rem}
+  th,td{padding:6px 4px!important}
+  .font-mono{font-size:.75rem}
+  .ip-presets{flex-wrap:wrap}
+}
+@media(max-width:380px){
+  .tab-btn{font-size:.55rem;padding:5px 7px}
+  table{font-size:.65rem}
+}
 @media print{body{background:#fff!important;color:#000!important}.glass{background:#fff!important;border:1px solid #ddd!important}.no-print{display:none!important}}
 </style>
 </head>
@@ -56,16 +82,19 @@ document.getElementById('pw-input').focus();
 
 <!-- Nav -->
 <nav class="fixed top-0 w-full z-50 glass border-b border-white/5 no-print">
-<div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between overflow-x-auto">
-<span class="text-sm font-semibold text-white/80 shrink-0 mr-4">Wealth Strategy</span>
-<div class="flex gap-1.5 shrink-0">
+<div class="max-w-6xl mx-auto px-2 md:px-4 py-2 md:py-3">
+<div class="flex items-center gap-2 mb-1.5 md:mb-0">
+<span class="text-sm font-semibold text-white/80 shrink-0 hidden md:inline">Wealth Strategy</span>
+<span class="text-xs font-semibold text-white/80 shrink-0 md:hidden">WS</span>
+</div>
+<div class="nav-scroll flex gap-1.5 pb-1">
 <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn active text-xs px-3 py-1.5 rounded-lg border border-white/10">Overview</button>
 <button onclick="switchTab('personal')" id="tab-personal" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Personal</button>
 <button onclick="switchTab('holdco')" id="tab-holdco" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Holdco</button>
-<button onclick="switchTab('salary')" id="tab-salary" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Salary &amp; Tax</button>
-<button onclick="switchTab('annual')" id="tab-annual" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Annual Plan</button>
-<button onclick="switchTab('income')" id="tab-income" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-accent-orange/30 text-accent-orange">💰 Income Planner</button>
-<button onclick="switchTab('calc')" id="tab-calc" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-accent-green/30 text-accent-green">Calculator</button>
+<button onclick="switchTab('salary')" id="tab-salary" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Salary</button>
+<button onclick="switchTab('annual')" id="tab-annual" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-white/10">Annual</button>
+<button onclick="switchTab('income')" id="tab-income" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-accent-orange/30 text-accent-orange">Income</button>
+<button onclick="switchTab('calc')" id="tab-calc" class="tab-btn text-xs px-3 py-1.5 rounded-lg border border-accent-green/30 text-accent-green">Calc</button>
 </div>
 </div>
 </nav>
@@ -89,16 +118,16 @@ document.getElementById('pw-input').focus();
 <section class="max-w-5xl mx-auto px-4 py-10">
 <h2 class="text-2xl font-bold text-white mb-4">Corporate Structure</h2>
 <div class="glass rounded-2xl p-6 mb-4">
-<div class="flex flex-wrap items-center justify-center gap-2 text-sm mb-6">
-<div class="px-4 py-3 rounded-lg bg-accent-blue/10 border border-accent-blue/20 text-center"><div class="text-accent-blue font-semibold">OpCo</div><div class="text-gray-500 text-xs">Tour business</div></div>
-<div class="text-gray-600">→</div>
-<div class="px-4 py-3 rounded-lg bg-accent-purple/10 border border-accent-purple/20 text-center"><div class="text-accent-purple font-semibold">Family Trust #1</div><div class="text-gray-500 text-xs">Owns OpCo</div></div>
-<div class="text-gray-600">→</div>
-<div class="px-4 py-3 rounded-lg bg-accent-green/10 border border-accent-green/20 text-center"><div class="text-accent-green font-semibold">HoldCo</div><div class="text-gray-500 text-xs">Investments</div></div>
-<div class="text-gray-600">→</div>
-<div class="px-4 py-3 rounded-lg bg-accent-orange/10 border border-accent-orange/20 text-center"><div class="text-accent-orange font-semibold">Family Trust #2</div><div class="text-gray-500 text-xs">Owns HoldCo</div></div>
-<div class="text-gray-600">→</div>
-<div class="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-center"><div class="text-white font-semibold">You</div><div class="text-gray-500 text-xs">Beneficiary</div></div>
+<div class="flex md:flex-row flex-col items-center justify-center gap-1 md:gap-2 text-sm mb-6">
+<div class="px-4 py-2.5 md:py-3 rounded-lg bg-accent-blue/10 border border-accent-blue/20 text-center w-full md:w-auto"><div class="text-accent-blue font-semibold text-sm">OpCo</div><div class="text-gray-500 text-xs">Tour business</div></div>
+<div class="text-gray-600 text-xs hidden md:block">→</div><div class="text-gray-500 text-xs md:hidden">↓</div>
+<div class="px-4 py-2.5 md:py-3 rounded-lg bg-accent-purple/10 border border-accent-purple/20 text-center w-full md:w-auto"><div class="text-accent-purple font-semibold text-sm">Family Trust #1</div><div class="text-gray-500 text-xs">Owns OpCo</div></div>
+<div class="text-gray-600 text-xs hidden md:block">→</div><div class="text-gray-500 text-xs md:hidden">↓</div>
+<div class="px-4 py-2.5 md:py-3 rounded-lg bg-accent-green/10 border border-accent-green/20 text-center w-full md:w-auto"><div class="text-accent-green font-semibold text-sm">HoldCo</div><div class="text-gray-500 text-xs">Investments</div></div>
+<div class="text-gray-600 text-xs hidden md:block">→</div><div class="text-gray-500 text-xs md:hidden">↓</div>
+<div class="px-4 py-2.5 md:py-3 rounded-lg bg-accent-orange/10 border border-accent-orange/20 text-center w-full md:w-auto"><div class="text-accent-orange font-semibold text-sm">Family Trust #2</div><div class="text-gray-500 text-xs">Owns HoldCo</div></div>
+<div class="text-gray-600 text-xs hidden md:block">→</div><div class="text-gray-500 text-xs md:hidden">↓</div>
+<div class="px-4 py-2.5 md:py-3 rounded-lg bg-white/10 border border-white/20 text-center w-full md:w-auto"><div class="text-white font-semibold text-sm">You</div><div class="text-gray-500 text-xs">Beneficiary</div></div>
 </div>
 
 <div class="grid md:grid-cols-2 gap-4">
@@ -182,8 +211,9 @@ document.getElementById('pw-input').focus();
 <!-- Why This Beats the Old Plan -->
 <section class="max-w-5xl mx-auto px-4 py-10">
 <h2 class="text-2xl font-bold text-white mb-6">Why This Revised Plan Is Better</h2>
-<div class="glass rounded-2xl p-6 overflow-x-auto">
-<table class="w-full text-sm">
+<div class="glass rounded-2xl p-4 md:p-6">
+<div class="table-scroll">
+<table class="w-full text-sm min-w-[600px]">
 <thead><tr class="border-b border-white/10 text-left"><th class="py-2 pr-4 text-gray-400">Factor</th><th class="py-2 pr-4 text-gray-400">Max RRSP ($175K)</th><th class="py-2 pr-4 text-gray-400">$100K salary</th><th class="py-2 text-accent-green">$83K salary (CPP2 max) ★</th></tr></thead>
 <tbody>
 <tr class="border-b border-white/5"><td class="py-2 pr-4">Salary</td><td class="pr-4 font-mono">$175,000</td><td class="pr-4 font-mono">$100,000</td><td class="font-mono text-accent-green">$83,100</td></tr>
@@ -376,7 +406,7 @@ document.getElementById('pw-input').focus();
 
 <!-- Three Paths -->
 <h3 class="text-xl font-bold text-white mb-4">Three Paths Compared (20 years)</h3>
-<div class="glass rounded-2xl p-6 mb-8 overflow-x-auto">
+<div class="glass rounded-2xl p-4 md:p-6 mb-8"><div class="table-scroll">
 <table class="w-full text-sm">
 <thead><tr class="border-b border-white/10 text-left"><th class="py-2 pr-3 text-gray-400">Metric</th><th class="py-2 pr-3 text-gray-400">$175K salary</th><th class="py-2 pr-3 text-gray-400">$100K salary</th><th class="py-2 pr-3 text-accent-green">$83.1K salary ★</th><th class="py-2 text-gray-400">All dividends</th></tr></thead>
 <tbody>
@@ -616,7 +646,7 @@ document.getElementById('pw-input').focus();
 <!-- Comparison Table -->
 <div class="mt-10">
 <h3 class="text-xl font-bold text-white mb-4">Quick Reference: Common Income Levels</h3>
-<div class="glass rounded-2xl p-6 overflow-x-auto">
+<div class="glass rounded-2xl p-4 md:p-6"><div class="table-scroll">
 <table class="w-full text-sm" id="ip-comparison-table">
 <thead><tr class="border-b border-white/10 text-left">
 <th class="py-2 pr-3 text-gray-400">Monthly Net</th>
