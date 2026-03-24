@@ -55,16 +55,16 @@ input[type=password]{font-size:16px}
 
 <!-- Password Screen -->
 <div id="pw-screen" class="fixed inset-0 z-[100] flex items-center justify-center" style="background:#0a0d1a">
-<div class="glass rounded-2xl p-8 max-w-sm w-full mx-4 text-center glow">
+<form class="glass rounded-2xl p-8 max-w-sm w-full mx-4 text-center glow" autocomplete="off" onsubmit="checkPw();return false;">
 <div class="text-3xl mb-2">&#x1f512;</div>
 <h2 class="text-xl font-bold text-white mb-1">Protected Document</h2>
-<p class="text-gray-400 text-sm mb-6">Enter the password to view this strategy.<br><span class="text-gray-500 text-xs">Hint: My mother's maiden name</span></p>
-<input type="password" id="pw-input" placeholder="Password" autocomplete="off"
-  class="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white text-center text-lg tracking-widest focus:outline-none focus:border-accent-blue mb-3"
-  onkeydown="if(event.key==='Enter')checkPw()">
-<button onclick="checkPw()" class="w-full py-3 rounded-lg bg-accent-blue/20 text-accent-blue border border-accent-blue/30 font-medium text-sm hover:bg-accent-blue/30 transition">Unlock</button>
+<p class="text-gray-400 text-sm mb-6">Enter the password to view this strategy.<br><span class="text-gray-500 text-xs">Hint: Mother's maiden name</span></p>
+<input type="text" id="pw-input" placeholder="Password" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other"
+  style="-webkit-text-security:disc"
+  class="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white text-center text-lg tracking-widest focus:outline-none focus:border-accent-blue mb-3">
+<button type="submit" class="w-full py-3 rounded-lg bg-accent-blue/20 text-accent-blue border border-accent-blue/30 font-medium text-sm hover:bg-accent-blue/30 transition">Unlock</button>
 <p id="pw-error" class="text-accent-red text-xs mt-3 hidden">Incorrect password. Try again.</p>
-</div>
+</form>
 </div>
 <script>
 function checkPw(){
